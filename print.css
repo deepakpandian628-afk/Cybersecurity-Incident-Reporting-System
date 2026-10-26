@@ -1,0 +1,80 @@
+/* ====================================================================
+   CyberShield - Formal Incident Response Dossier (Print Styling)
+   ==================================================================== */
+
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt;
+    margin: 0;
+    padding: 1.5cm;
+  }
+
+  .soc-sidebar,
+  .soc-topbar,
+  .btn,
+  .no-print,
+  .sidebar-toggle-btn {
+    display: none !important;
+  }
+
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .page-container {
+    padding: 0 !important;
+  }
+
+  .print-header {
+    display: block !important;
+    border-bottom: 2px solid #0f172a;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+  }
+
+  .soc-card {
+    background: transparent !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    color: #111827 !important;
+    page-break-inside: avoid;
+    margin-bottom: 16px;
+    padding: 16px;
+  }
+
+  .table-cyber {
+    color: #111827 !important;
+    border: 1px solid #e2e8f0;
+  }
+
+  .table-cyber th {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+  }
+
+  .table-cyber td {
+    color: #334155 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .badge-soc {
+    border: 1px solid #64748b !important;
+    color: #0f172a !important;
+    background: #f8fafc !important;
+  }
+
+  a {
+    color: #0284c7 !important;
+    text-decoration: none !important;
+  }
+
+  .print-signoff {
+    display: block !important;
+    margin-top: 50px;
+    page-break-inside: avoid;
+  }
+}

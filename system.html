@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}System & Database Diagnostics{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+        <h2 class="text-white mb-1"><i class="bi bi-hdd-network-fill text-info me-2"></i>System & Database Diagnostics</h2>
+        <p class="text-muted mb-0 small">Infrastructure telemetry, XAMPP MySQL connection status, and operational health.</p>
+    </div>
+    <div>
+        <form action="{{ url_for('admin_test_db_connection') }}" method="POST">
+            <button type="submit" class="btn btn-cyber-primary btn-sm">
+                <i class="bi bi-arrow-repeat me-1"></i> Probe / Reconnect XAMPP MySQL
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Active Database Engine Card -->
+    <div class="col-lg-6">
+        <div class="soc-card h-100">
+            <div class="soc-card-header">
+                <h5 class="soc-card-title">
+                    <i class="bi bi-database-check text-info"></i> Active Database Engine
+                </h5>
+                <span class="badge {{ 'bg-success' if db_info.is_mysql else 'bg-warning text-dark' }} px-3 py-1">
+                    {{ db_info.engine }}
+                </span>
+            </div>
+
+            <ul class="list-group list-group-flush bg-transparent small mb-4">
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 px-0 py-2 d-flex justify-content-between">
+                    <span class="text-muted">Target Host:</span>
+                    <span class="font-monospace text-info">{{ db_info.host }}</span>
+                </li>
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 px-0 py-2 d-flex justify-content-between">
+                    <span class="text-muted">Database Name:</span>
+                    <span class="font-monospace text-white">{{ db_info.database }}</span>
+                </li>
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 px-0 py-2 d-flex justify-content-between">
+                    <span class="text-muted">Connection Status:</span>
+                    <span class="fw-bold {{ 'text-success' if db_info.is_mysql else 'text-warning' }}">{{ db_info.status }}</span>
+                </li>
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 px-0 py-2 d-flex justify-content-between">
+                    <span class="text-muted">Total Security Incidents:</span>
+                    <span class="font-monospace text-cyan fw-bold">{{ db_info.total_incidents }}</span>
+                </li>
+                <li class="list-group-item bg-transparent text-light border-secondary border-opacity-25 px-0 py-2 d-flex justify-content-between">
+                    <span class="text-muted">Enrolled Personnel:</span>
+                    <span class="font-monospace text-white">{{ db_info.total_users }}</span>
+                </li>
+            </ul>
+
+            {% if not db_info.is_mysql %}
+            <div class="p-3 rounded bg-dark border border-warning border-opacity-50 small text-warning">
+                <div class="fw-bold mb-1"><i class="bi bi-exclamation-diamond-fill me-1"></i> Running on Local Storage Engine</div>
+                XAMPP MySQL is currently not reachable on <code>localhost:3306</code>. When you start Apache & MySQL inside the XAMPP Control Panel, click <strong>"Probe / Reconnect XAMPP MySQL"</strong> above to transition to MySQL!
+            </div>
+            {% else %}
+            <div class="p-3 rounded bg-dark border border-success border-opacity-50 small text-success">
+                <div class="fw-bold mb-1"><i class="bi bi-check-circle-fill me-1"></i> Connected to XAMPP MySQL</div>
+                Active connection established to MySQL server at <code>{{ db_info.host }}</code> with database <code>{{ db_info.database }}</code>.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- XAMPP Instructions & Manual SQL Import -->
+    <div class="col-lg-6">
+        <div class="soc-card h-100">
+            <div class="soc-card-header">
+                <h5 class="soc-card-title">
+                    <i class="bi bi-filetype-sql text-info"></i> XAMPP & phpMyAdmin Setup
+                </h5>
+                <span class="badge bg-dark border border-secondary text-info">College Submission</span>
+            </div>
+
+            <p class="small text-muted mb-3">
+                For college viva examination and evaluation with phpMyAdmin in XAMPP:
+            </p>
+
+            <ol class="small text-light ps-3 mb-4" style="line-height: 1.8;">
+                <li>Start <strong>XAMPP Control Panel</strong> and click <strong>Start</strong> next to <strong>MySQL</strong>.</li>
+                <li>Open your browser to <code>http://localhost/phpmyadmin</code>.</li>
+                <li>Click <strong>Import</strong> in the top navigation bar.</li>
+                <li>Choose the SQL file located at:
+                    <div class="p-2 my-1 rounded bg-dark border border-secondary border-opacity-25 font-monospace text-info small">
+                        cybershield/database/cybershield_db.sql
+                    </div>
+                </li>
+                <li>Click <strong>Go</strong> to import the database, users, incidents, and audit trails.</li>
+            </ol>
+
+            <div class="p-2 rounded bg-dark border border-secondary border-opacity-25 small text-muted font-monospace">
+                <div><i class="bi bi-info-circle text-info me-1"></i> Default XAMPP MySQL Port: <strong>3306</strong></div>
+                <div><i class="bi bi-info-circle text-info me-1"></i> Default User: <strong>root</strong> &bull; Password: <strong>(none)</strong></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Server Environment Card -->
+<div class="soc-card">
+    <div class="soc-card-header">
+        <h5 class="soc-card-title">
+            <i class="bi bi-cpu text-info"></i> Server & Framework Runtime Telemetry
+        </h5>
+    </div>
+    
+    <div class="row g-3 small">
+        <div class="col-md-3">
+            <div class="text-muted">Python Version:</div>
+            <div class="font-monospace text-white">{{ sys_info.python_version }}</div>
+        </div>
+        <div class="col-md-3">
+            <div class="text-muted">Web Framework:</div>
+            <div class="font-monospace text-white">Flask {{ sys_info.flask_version }}</div>
+        </div>
+        <div class="col-md-3">
+            <div class="text-muted">Host OS Platform:</div>
+            <div class="font-monospace text-white">{{ sys_info.platform }}</div>
+        </div>
+        <div class="col-md-3">
+            <div class="text-muted">App Execution Mode:</div>
+            <div class="font-monospace text-success">Production / SOC Standalone</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

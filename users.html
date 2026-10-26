@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}User & Role Administration{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+        <h2 class="text-white mb-1"><i class="bi bi-people-fill text-info me-2"></i>Personnel & Access Control</h2>
+        <p class="text-muted mb-0 small">Role-Based Access Control (RBAC), user provisioning, and authorization management.</p>
+    </div>
+</div>
+
+<div class="soc-card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table table-cyber mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Badge ID</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th class="text-end">Manage Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle" style="width: 32px; height: 32px; font-size: 0.85rem;">
+                                {{ u.full_name[0] }}
+                            </div>
+                            <div>
+                                <div class="text-white fw-semibold">{{ u.full_name }}</div>
+                                <div class="text-muted small font-monospace">@{{ u.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="small font-monospace text-light">{{ u.email }}</td>
+                    <td class="small text-muted">{{ u.department }}</td>
+                    <td class="small font-monospace text-info">{{ u.badge_id or 'N/A' }}</td>
+                    <td>
+                        {% if u.role == 'admin' %}
+                            <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50">
+                                <i class="bi bi-shield-fill-check me-1"></i>ADMIN
+                            </span>
+                        {% elif u.role == 'analyst' %}
+                            <span class="badge bg-primary bg-opacity-25 text-info border border-primary border-opacity-50">
+                                <i class="bi bi-search me-1"></i>SOC ANALYST
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary bg-opacity-25 text-light border border-secondary border-opacity-50">
+                                <i class="bi bi-person me-1"></i>REPORTER
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50">
+                                Active
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50">
+                                Suspended
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="small text-muted font-monospace">{{ u.created_at }}</td>
+                    <td class="text-end">
+                        {% if u.id != session.get('user_id') %}
+                        <form action="{{ url_for('admin_update_user_role', user_id=u.id) }}" method="POST" class="d-inline-flex gap-1 justify-content-end">
+                            <select name="role" class="form-select form-select-cyber form-select-sm" style="width: 120px;">
+                                <option value="reporter" {{ 'selected' if u.role == 'reporter' else '' }}>Reporter</option>
+                                <option value="analyst" {{ 'selected' if u.role == 'analyst' else '' }}>Analyst</option>
+                                <option value="admin" {{ 'selected' if u.role == 'admin' else '' }}>Admin</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-cyber-primary py-1 px-2" title="Save Role">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="badge bg-dark text-muted font-monospace">Current Session</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
